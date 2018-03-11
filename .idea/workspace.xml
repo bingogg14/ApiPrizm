@@ -17,36 +17,36 @@
       <file leaf-file-name="index.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="48" column="36" lean-forward="false" selection-start-line="48" selection-start-column="36" selection-end-line="48" selection-end-column="36" />
+            <state relative-caret-position="68">
+              <caret line="4" column="12" lean-forward="false" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
               <folding>
-                <element signature="e#2680#3264#0#PHP" expanded="false" />
+                <element signature="e#2782#3366#0#PHP" expanded="false" />
                 <element signature="n#GetInfoWallet#0;n#!!top" expanded="false" />
-                <element signature="e#4607#4816#0#PHP" expanded="false" />
+                <element signature="e#4709#4918#0#PHP" expanded="false" />
                 <element signature="n#GetInfoWalletTransactions#0;n#!!top" expanded="false" />
-                <element signature="e#5526#5796#0#PHP" expanded="false" />
+                <element signature="e#5628#5898#0#PHP" expanded="false" />
                 <element signature="n#GetAccount#0;n#!!top" expanded="false" />
-                <element signature="e#6469#6778#0#PHP" expanded="false" />
+                <element signature="e#6571#6880#0#PHP" expanded="false" />
                 <element signature="n#CurlJsonGet#0;n#!!top" expanded="false" />
-                <element signature="e#7681#7799#0#PHP" expanded="false" />
+                <element signature="e#7783#7901#0#PHP" expanded="false" />
                 <element signature="n#ValidationOnError#0;n#!!top" expanded="false" />
-                <element signature="e#8003#8141#0#PHP" expanded="false" />
+                <element signature="e#8105#8243#0#PHP" expanded="false" />
                 <element signature="n#GetErrors#0;n#!!top" expanded="false" />
-                <element signature="e#8174#8314#0#PHP" expanded="false" />
+                <element signature="e#8276#8416#0#PHP" expanded="false" />
                 <element signature="n#GetAccountBalancePrizm#0;n#!!top" expanded="false" />
-                <element signature="e#8438#8591#0#PHP" expanded="false" />
+                <element signature="e#8540#8693#0#PHP" expanded="false" />
                 <element signature="n#GetAccountBalancePrizmPara#0;n#!!top" expanded="false" />
-                <element signature="e#9400#9569#0#PHP" expanded="false" />
+                <element signature="e#9502#9671#0#PHP" expanded="false" />
                 <element signature="n#TimeStampPrizm#0;n#!!top" expanded="false" />
-                <element signature="e#9813#10253#0#PHP" expanded="false" />
+                <element signature="e#9915#10355#0#PHP" expanded="false" />
                 <element signature="n#GetTransactionsParams#0;n#!!top" expanded="false" />
-                <element signature="e#11300#11560#0#PHP" expanded="false" />
+                <element signature="e#11402#11662#0#PHP" expanded="false" />
                 <element signature="n#GetTransactions#0;n#!!top" expanded="false" />
-                <element signature="e#15089#15262#0#PHP" expanded="false" />
+                <element signature="e#15191#15364#0#PHP" expanded="false" />
                 <element signature="n#ValidateRequest#0;n#!!top" expanded="false" />
-                <element signature="e#15409#15694#0#PHP" expanded="false" />
+                <element signature="e#15511#15796#0#PHP" expanded="false" />
                 <element signature="n#ValidateRequestTransaction#0;n#!!top" expanded="false" />
-                <element signature="e#16098#16361#0#PHP" expanded="false" />
+                <element signature="e#16200#16463#0#PHP" expanded="false" />
                 <element signature="n#CheckParamsTransactions#0;n#!!top" expanded="false" />
               </folding>
             </state>
@@ -155,12 +155,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1520624379110</updated>
-      <workItem from="1520624380806" duration="71399000" />
+      <workItem from="1520624380806" duration="71625000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71399000" />
+    <option name="totallyTimeSpent" value="71625000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1294" height="1057" extended-state="0" />
@@ -231,36 +231,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="48" column="36" lean-forward="false" selection-start-line="48" selection-start-column="36" selection-end-line="48" selection-end-column="36" />
+        <state relative-caret-position="68">
+          <caret line="4" column="12" lean-forward="false" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
           <folding>
-            <element signature="e#2680#3264#0#PHP" expanded="false" />
+            <element signature="e#2782#3366#0#PHP" expanded="false" />
             <element signature="n#GetInfoWallet#0;n#!!top" expanded="false" />
-            <element signature="e#4607#4816#0#PHP" expanded="false" />
+            <element signature="e#4709#4918#0#PHP" expanded="false" />
             <element signature="n#GetInfoWalletTransactions#0;n#!!top" expanded="false" />
-            <element signature="e#5526#5796#0#PHP" expanded="false" />
+            <element signature="e#5628#5898#0#PHP" expanded="false" />
             <element signature="n#GetAccount#0;n#!!top" expanded="false" />
-            <element signature="e#6469#6778#0#PHP" expanded="false" />
+            <element signature="e#6571#6880#0#PHP" expanded="false" />
             <element signature="n#CurlJsonGet#0;n#!!top" expanded="false" />
-            <element signature="e#7681#7799#0#PHP" expanded="false" />
+            <element signature="e#7783#7901#0#PHP" expanded="false" />
             <element signature="n#ValidationOnError#0;n#!!top" expanded="false" />
-            <element signature="e#8003#8141#0#PHP" expanded="false" />
+            <element signature="e#8105#8243#0#PHP" expanded="false" />
             <element signature="n#GetErrors#0;n#!!top" expanded="false" />
-            <element signature="e#8174#8314#0#PHP" expanded="false" />
+            <element signature="e#8276#8416#0#PHP" expanded="false" />
             <element signature="n#GetAccountBalancePrizm#0;n#!!top" expanded="false" />
-            <element signature="e#8438#8591#0#PHP" expanded="false" />
+            <element signature="e#8540#8693#0#PHP" expanded="false" />
             <element signature="n#GetAccountBalancePrizmPara#0;n#!!top" expanded="false" />
-            <element signature="e#9400#9569#0#PHP" expanded="false" />
+            <element signature="e#9502#9671#0#PHP" expanded="false" />
             <element signature="n#TimeStampPrizm#0;n#!!top" expanded="false" />
-            <element signature="e#9813#10253#0#PHP" expanded="false" />
+            <element signature="e#9915#10355#0#PHP" expanded="false" />
             <element signature="n#GetTransactionsParams#0;n#!!top" expanded="false" />
-            <element signature="e#11300#11560#0#PHP" expanded="false" />
+            <element signature="e#11402#11662#0#PHP" expanded="false" />
             <element signature="n#GetTransactions#0;n#!!top" expanded="false" />
-            <element signature="e#15089#15262#0#PHP" expanded="false" />
+            <element signature="e#15191#15364#0#PHP" expanded="false" />
             <element signature="n#ValidateRequest#0;n#!!top" expanded="false" />
-            <element signature="e#15409#15694#0#PHP" expanded="false" />
+            <element signature="e#15511#15796#0#PHP" expanded="false" />
             <element signature="n#ValidateRequestTransaction#0;n#!!top" expanded="false" />
-            <element signature="e#16098#16361#0#PHP" expanded="false" />
+            <element signature="e#16200#16463#0#PHP" expanded="false" />
             <element signature="n#CheckParamsTransactions#0;n#!!top" expanded="false" />
           </folding>
         </state>

@@ -1,3 +1,10 @@
+<?php
+/*Author
+    Create: bingogg14
+    Email:  bingogg14@gmail.com
+    Skype:  viperpropasha
+ */
+?>
 <!doctype html>
 <html lang="en">
 <head>
