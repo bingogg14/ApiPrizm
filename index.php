@@ -43,7 +43,7 @@ $count_attempt_for_request = 3;
 if (isset($_REQUEST)) {
     if (isset($_REQUEST['wallet']) && !empty($_REQUEST['wallet'])) {
 
-        $tmp = GetInfoWallet($_REQUEST['wallet'], $_REQUEST['time_mins'], $_REQUEST['wallet_sender'], $_REQUEST['wallet_getter']);
+        $tmp = GetInfoWallet($_REQUEST['wallet'], $_REQUEST['time_mins'], $_REQUEST['wallet_sender'], $_REQUEST['wallet_getter'], $_REQUEST['trans_id']);
 
     }//Check Wallet
 } //Check On isset Request
@@ -296,7 +296,7 @@ function GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_ge
             $transactions = GetTransactions($wallet);
         }
 
-        //var_dump($transactions); // Json
+        var_dump($transactions); // Json
 
 
     } else {
@@ -320,12 +320,15 @@ function GetTransactions($wallet, $params = null) {
                 $transaction_tmp = CurlJsonGet($GLOBALS['url_default_request'], $query);
 
                 $transaction_check = CheckParamsTransactions($transaction_tmp, $params); //Check on Isset Any Params
-
+                //var_dump($query);
+                //var_dump($cnt);
                 //Get Slice Array for Last equally any param
-                $last_array = ValidateRequestTransaction(($transaction_check));
-                if (sizeof($last_array) > 0 || $last_array == true) {
-                    $transaction_tmp = $transaction_check;
-                    //var_dump("test");
+                if (ValidateRequest($transaction_check)) {
+                    if (ValidateRequestTransaction($transaction_check) === true) {
+                        $transaction_tmp = $transaction_check;
+                    } elseif (sizeof(ValidateRequestTransaction($transaction_check)) > 0) {
+                        $transaction_tmp = $transaction_check;
+                    }
                 }
 
 
@@ -355,6 +358,7 @@ function GetTransactions($wallet, $params = null) {
 
                 ]);
                // var_dump($query);
+                //var_dump($cnt);
                // echo "<br><br>";
                 $transaction_tmp = CurlJsonGet($GLOBALS['url_default_request'], $query);
                 //If Valid False die send Request and no-repeat
@@ -417,15 +421,23 @@ function CheckParamsTransactions($json, $params) {
                     if ($key_param=="timestamp") {
                         $time_minutes_site = TimeStampPrizm($transaction[$key_param]); //Time Stamp Prizm convert Server timestamp in minutes
                         $time_minutes_server = time() - ($value * 60);                 //Value = minutes param * 60sec / and minus now_time - minutes param
-                        if ($time_minutes_server < $time_minutes_site) {
-                            $last_equally = $key;
+                       // echo gmdate("Y/m/d H:i:s",$time_minutes_server)."---".gmdate("Y/m/d H:i:s",$time_minutes_site)." UNIX ". $time_minutes_server . "---" . $time_minutes_site . "<br><br>";
+                        if ($time_minutes_server > $time_minutes_site) {
+                             $last_equally = $key;
                             //var_dump($key);
                         }
                     } else {
                         //Check other Params
                         //var_dump("test");
                         if ($transaction[$key_param] == $value) {
-                            $last_equally = $key;
+                         //   var_dump("test");
+                            if ($key_param="transaction") {
+                                //Don't add last transaction
+                                $last_equally = $key-1;
+                            } else {
+                                $last_equally = $key;
+                            }
+
                         }
                     }
                 }
