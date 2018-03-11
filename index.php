@@ -30,19 +30,38 @@
         <br><br>
         <input type="submit" value="Отправить">
     </form>
+    <form method="post" action="index.php">
+        <h3>Paymant</h3>
+        <label for="Wallet">Wallet : </label>
+        <input id="Wallet" type="text" name="wallet">
+
+        <h4>Params</h4>
+
+        <label for="Wallet">Period Minutes: </label>
+        <input id="Wallet" type="text" name="time_mins">
+        <br><br>
+        <label for="Wallet">Transaction id: </label>
+        <input id="Wallet" type="text" name="trans_id">
+        <br><br>
+        <label for="Wallet">Wallet Sender: </label>
+        <input id="Wallet" type="text" name="wallet_sender">
+        <br><br>
+        <label for="Wallet">Wallet Getter: </label>
+        <input id="Wallet" type="text" name="wallet_getter">
+        <br><br>
+        <input type="submit" value="Отправить">
+    </form>
 
 </div>
 
 <?php
-$url_default_request       = 'http://tech.prizm-space.com/prizm?';
-$index                     = 100;
-$timeout                   = 1;
-$chunk_url_count           = 3;
-$count_attempt_for_request = 3;
+$url_default_request       = 'http://tech.prizm-space.com/prizm?';  //Default url fore Request
+$index                     = 100;                                   // Count index page for one request
+$timeout                   = 1;                                     //Now Don't use if will be error 503 insert to after:  $transaction_tmp = CurlJsonGet($GLOBALS['url_default_request'], $query);
 //Get Post Value && Test API
 if (isset($_REQUEST)) {
     if (isset($_REQUEST['wallet']) && !empty($_REQUEST['wallet'])) {
-
+        //Get Transactions or Info
         $tmp = GetInfoWallet($_REQUEST['wallet'], $_REQUEST['time_mins'], $_REQUEST['wallet_sender'], $_REQUEST['wallet_getter'], $_REQUEST['trans_id']);
 
     }//Check Wallet
@@ -55,96 +74,83 @@ if (isset($_REQUEST)) {
 * @param    $period_mins      int       Get Transaction for the last n min
 * @param    $wallet_sender    string    The code wallet account from which the payment will be made sender on wallet
 * @param    $wallet_geter     string    The code wallet account on which the payment will be made getter
-* @return   $wallet_geter     string    The code wallet account on which the payment will be made getter
+* @param    $trans_id         int       The code transaction_id
+* @return   $result           json      The return encode array all search transactions with params
 */
-//Functions
 function GetInfoWallet($wallet, $period_mins = null, $wallet_sender = null, $wallet_getter = null, $trans_id = null) {
 
     //Get Account
-    $account = getAccount($wallet);
-    if (ValidationOnError($account) == true) {
+    $account = getAccount($wallet);                                            //Json array account
+    if (ValidationOnError($account) == true) {                                 //Validate on error get account
 
         //Acoount and Balance
-        $balance_account = GetAccountBalancePrizm($account);
-        echo "<h1>Баланс:</h1>" . $balance_account . "<br><br><br>";
-        $balance_account_para = GetAccountBalancePrizmPara($account);
-        var_dump($account);
+        $balance_account = GetAccountBalancePrizm($account);                   //String
+        //Echo format balance
+        echo "<h1>Баланс:</h1>" . $balance_account . "<br><br><br>";           //String
+        //Get balance para
+        $balance_account_para = GetAccountBalancePrizmPara($account);          //Json
+        var_dump($account); // Echo json array
         echo "<br><br>";
-        echo "<h1>Баланс Пара:</h1>" . $balance_account_para . "<br><br><br>";
+        echo "<h1>Баланс Пара:</h1>" . $balance_account_para . "<br><br><br>"; // Echo json array
 
 
         //Go to function Transactions with Params
         $transactions_account_params = GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_getter, $trans_id);
-
+        return $transactions_account_params; //Return Json array or if(have erorrs: false)
 
     } else {
-        $erorrs = GetErrors($account);
-        return false;
+        $erorrs = GetErrors($account); // Function for get Errors you can add your own functionality to function
+        return false;                  // Default return if error
     }
 }
 
 /*
 * GetInfoWalletTransactions
 *
-* @param    $wallet           string    The code wallet account on site http://tech.prizm-space.com
-* @param    $period_mins      int       Get Transaction for the last n min
-* @param    $wallet_sender    string    The code wallet account from which the payment will be made sender on wallet
-* @param    $wallet_geter      string    The code wallet account on which the payment will be made getter
-* @return
+* @param    $wallet           string      The code wallet account on site http://tech.prizm-space.com
+* @return   $result           json_array  Full info for One Transaction
 */
 function GetInfoWalletTransactions($wallet) {
     if (!empty($wallet)) {
+        //Create params for url
         $query = http_build_query([
             'requestType' => 'getBlockchainTransactions',
             'account'     => $wallet
         ]);
         //Send Request for Get Account Wallet Transactions
         $InfoWalletTransactions = CurlJsonGet($GLOBALS['url_default_request'], $query);
-        return $InfoWalletTransactions;
+        return $InfoWalletTransactions; //Json array
     } else {
-        $result['error'] = "Error Wallet is empty";
-        $result = json_encode($result);
-        return $result;
+        $result['error'] = "Error Wallet is empty"; //Error Description
+        $result = json_encode($result);             //Encode error to array
+        return $result;                             //Json array: Return array with false
     }
 
 }
 
 /*
-* GetInfoWalletTransactions
-*
-* @param    $wallet           string    The code wallet account on site http://tech.prizm-space.com
-* @param    $period_mins      int       Get Transaction for the last n min
-* @param    $wallet_sender    string    The code wallet account from which the payment will be made sender on wallet
-* @param   $wallet_geter      string    The code wallet account on which the payment will be made getter
-* @return
-*/
-function GetInfoWalletAllTransactions($wallet, $transaction_account) {
-
-    //var_dump($account);
-}
-
-/*
 * GetAccount function get info wallet account on site http://tech.prizm-space.com
 *
-* @param    $wallet           string    The code wallet account on site http://tech.prizm-space.com
+* @param    $wallet           string      The code wallet account on site http://tech.prizm-space.com
+* @return   $result           json_array  Json array with info for account get
 */
 function GetAccount($wallet) {
     if (!empty($wallet)) {
+        //Create params for url
         $query = http_build_query([
             'requestType' => 'getAccount',
             'account'     => $wallet
         ]);
         //Send Request for Get Account
         $account = CurlJsonGet($GLOBALS['url_default_request'], $query);
-        return $account;
+        return $account;                                //Json array
     } else {
-        $result['error'] = "Error Wallet is empty";
-        $result = json_encode($result);
-        return $result;
+        $result['error'] = "Error Wallet is empty";     //Error Description
+        $result = json_encode($result);                 //Encode error to array
+        return $result;                                 //Json array: Return array with false
     }
 
 }
-
 
 /*
 * cURL request Get Request
@@ -180,11 +186,12 @@ function CurlJsonGet($url, $data = '') {
         return $result;
     }
 }//#IF check url
+
 /*
 * ValidationOnError
 *
-* @param    $url      string    The url to post to 'theurlyouneedtosendto.com/m/admin'/something'
-* @return   $result             HTTP resonse
+* @param    $json     string    json array
+* @return   $result   bool      Status Validate
 */
 function ValidationOnError($json) {
     $array = json_decode($json, true);
@@ -194,79 +201,79 @@ function ValidationOnError($json) {
         return true;
     }
 }
+
 /*
 * GetErrors
 *
-* @param    $url      string    The url to post to 'theurlyouneedtosendto.com/m/admin'/something'
-* @return   $result             HTTP resonse
+* @param    $json      json_array    Array with errors
+* @return   $result                  Custom Function (Now None)
 */
 function GetErrors($json) {
 
 }
+
 /*
-* FormatSimplyInfoTransaction
+* GetAccountBalancePrizm
 *
-* @param    $url      string    The url to post to 'theurlyouneedtosendto.com/m/admin'/something'
-* @return   $result             HTTP resonse
+* @param    $account   json_array    Array account info
+* @return   $result    string        String balance
 */
-function FormatSimplyInfoTransaction($json) {
-    $array = json_decode($json, true);
-  //  var_dump($array);
-
-    $simply_array = array();
-    $cnt = 0;
-
-    if (is_array($array['transactions'])){
-        foreach ($array['transactions'] as $value){
-            if(isset($value['senderRS'])):         $simply_array[$cnt]['senderRS']      = $value['senderRS'];         endif;//Sender Wallet                                string(26)
-            if(isset($value['timestamp'])):        $simply_array[$cnt]['timestamp']     = $value['timestamp'];        endif;//TimeStamp Transaction                        int
-            if(isset($value['type'])):             $simply_array[$cnt]['type']          = $value['type'];             endif;//Type Transaction ((+)type=1) ((-)type=0)     int(1)
-            if(isset($value['recipientRS'])):      $simply_array[$cnt]['recipientRS']   = $value['recipientRS'];      endif;//Wallet Getter                                string(16)
-            if(isset($value['transaction'])):      $simply_array[$cnt]['transaction']   = $value['transaction'];      endif;//Wallet Setter                                int
-            $cnt++;
-        }
-    }
-
-    return $simply_array;
-}
-
-function ValidatorRequests() {
-
-}
-
 function GetAccountBalancePrizm($account) {
 
     $array = json_decode($account, true);
     return $array['balanceNQT'];
 }
 
+/*
+* GetAccountBalancePrizmPara
+*
+* @param    $account   json_array    Array account info
+* @return   $result    json_array    Array with info GetPara
+*/
 function GetAccountBalancePrizmPara ($account) {
     if (!empty($account)) {
         $array = json_decode($account, true);
         $account_id = $array['account'];
+        //Create param for url
         $query = http_build_query([
             'requestType' => 'getPara',
             'account'     => $account_id
         ]);
         //Send Request for Get Account
-        $para = CurlJsonGet($GLOBALS['url_default_request'], $query);
-        return $para;
+        $para = CurlJsonGet($GLOBALS['url_default_request'], $query); //Request for get ParaAccount
+        return $para;                                                 //Return
 
     } else {
-        $result['error'] = "Error account is empty";
-        $result = json_encode($result);
-        return $result;
+        $result['error'] = "Error account is empty";        //Error Description
+        $result = json_encode($result);                     //Encode Error
+        return $result;                                     //Return array with error
     }
 
 
 }
 
+/*
+* TimeStampPrizm
+*
+* @param    $timestamp  json_array    Array account info
+* @return   $result     timestamp     TimeStamp format with static value on site prizma
+*/
 function TimeStampPrizm ($timestamp) {
-    $epoch_begin = 1486768980000 - 500; //Value on Site Prizm
-    $date = floor(($timestamp * 1000 + $epoch_begin) / 1000);
+    $epoch_begin = 1486768980000 - 500;                             //Value on Site Prizm
+    $date = floor(($timestamp * 1000 + $epoch_begin) / 1000); //Function on site write on js
     return $date;
 }
 
+/*
+* GetTransactionsParams MiddleWear function
+*
+* @param    $wallet         string         Account wallet
+* @param    $period_mins    int            Minutes
+* @param    $wallet_sender  string         Account wallet sender
+* @param    $wallet_getter  string         Account wallet getter
+* @param    $trans_id       int            Transaction_id operation
+* @return   $result         json_array     Ready Array with transactions or False
+*/
 function GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_getter, $trans_id) {
     if (!empty($wallet)) {
 
@@ -296,14 +303,21 @@ function GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_ge
             $transactions = GetTransactions($wallet);
         }
 
-        var_dump($transactions); // Json
+        return $transactions; // Json array
 
 
     } else {
-        return false;
+        return false; // if empty wallet
     }
 }
 
+/*
+* GetTransactions
+*
+* @param    $wallet         string              Account wallet
+* @param    $params         array               Params for Search
+* @return   $result         json_array/bool     Ready Array with all transactions or False(if have error)
+*/
 function GetTransactions($wallet, $params = null) {
     if (!empty($wallet)) {
         $transaction_array = array();
@@ -387,6 +401,12 @@ function GetTransactions($wallet, $params = null) {
     }
 }
 
+/*
+* ValidateRequest
+*
+* @param    $json           json_array     Json Request for Validate on isset array json
+* @return   $result         bool           Status Validate
+*/
 function ValidateRequest($json) {
     if (!is_array(json_decode($json, true))) {
         return false;
@@ -395,11 +415,17 @@ function ValidateRequest($json) {
     }
 }
 
+/*
+* ValidateRequestTransaction
+*
+* @param    $json           json_array          Json array with transaction
+* @return   $result         bool/json_array     Return array if this last page with transactions or return true (not last) or false array don't have transactions in request
+*/
 function ValidateRequestTransaction($json) {
     $array = json_decode($json, true);
     if (is_array($array)) {
         if (sizeof($array['transactions']) > 0) {
-            if (sizeof($array['transactions']) < 100) {
+            if (sizeof($array['transactions']) < $GLOBALS['index']) {
                 return json_encode($array); //Last Url //Fix one more Request
             }
             return true;
@@ -409,6 +435,13 @@ function ValidateRequestTransaction($json) {
     }
 }
 
+/*
+* CheckParamsTransactions
+*
+* @param    $json           string                Account wallet
+* @param    $params         array                 Minutes
+* @return   $result         json_array/bool       If find param return slice array or false(if have error)
+*/
 function CheckParamsTransactions($json, $params) {
     $array_transaction = json_decode($json, true);
     if (sizeof($array_transaction) > 0 && sizeof($params) > 0) {
