@@ -62,24 +62,25 @@ function GetInfoWallet($wallet, $period_mins = null, $wallet_sender = null, $wal
 
     //Get Account
     $account = getAccount($wallet);
-    if (ValidationOnError($account) == true) :
+    if (ValidationOnError($account) == true) {
 
         //Acoount and Balance
         $balance_account = GetAccountBalancePrizm($account);
-        echo "<h1>Баланс:</h1>".$balance_account."<br><br><br>";
+        echo "<h1>Баланс:</h1>" . $balance_account . "<br><br><br>";
         $balance_account_para = GetAccountBalancePrizmPara($account);
-        var_dump($account); echo "<br><br>";
-        echo "<h1>Баланс Пара:</h1>".$balance_account_para."<br><br><br>";
+        var_dump($account);
+        echo "<br><br>";
+        echo "<h1>Баланс Пара:</h1>" . $balance_account_para . "<br><br><br>";
 
 
         //Go to function Transactions with Params
         $transactions_account_params = GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_getter, $trans_id);
 
 
-    else:
+    } else {
         $erorrs = GetErrors($account);
         return false;
-    endif;
+    }
 }
 
 /*
@@ -215,17 +216,16 @@ function FormatSimplyInfoTransaction($json) {
     $simply_array = array();
     $cnt = 0;
 
-    if (is_array($array['transactions'])):
-        foreach ($array['transactions'] as $value):
-            if(isset($value['senderRS'])):  $simply_array[$cnt]['senderRS']      = $value['senderRS'];  endif;//Sender Wallet                                string(26s)
-            if(isset($value['timestamp'])): $simply_array[$cnt]['timestamp']     = $value['timestamp']; endif;//TimeStamp Transaction                        int
-            if(isset($value['type'])):      $simply_array[$cnt]['type']          = $value['type'];      endif;//Type Transaction ((+)type=1) ((-)type=0)     int(1)
-            if(isset($value['recipientRS'])):      $simply_array[$cnt]['recipientRS']   = $value['recipientRS'];      endif;//Type Transaction ((+)type=1) ((-)type=0)     int(1)
-            if(isset($value['transaction'])):      $simply_array[$cnt]['transaction']   = $value['transaction'];      endif;//Type Transaction ((+)type=1) ((-)type=0)     int(1)
-
+    if (is_array($array['transactions'])){
+        foreach ($array['transactions'] as $value){
+            if(isset($value['senderRS'])):         $simply_array[$cnt]['senderRS']      = $value['senderRS'];         endif;//Sender Wallet                                string(26)
+            if(isset($value['timestamp'])):        $simply_array[$cnt]['timestamp']     = $value['timestamp'];        endif;//TimeStamp Transaction                        int
+            if(isset($value['type'])):             $simply_array[$cnt]['type']          = $value['type'];             endif;//Type Transaction ((+)type=1) ((-)type=0)     int(1)
+            if(isset($value['recipientRS'])):      $simply_array[$cnt]['recipientRS']   = $value['recipientRS'];      endif;//Wallet Getter                                string(16)
+            if(isset($value['transaction'])):      $simply_array[$cnt]['transaction']   = $value['transaction'];      endif;//Wallet Setter                                int
             $cnt++;
-        endforeach;
-    endif;
+        }
+    }
 
     return $simply_array;
 }
@@ -268,68 +268,194 @@ function TimeStampPrizm ($timestamp) {
 }
 
 function GetTransactionsParams($wallet, $period_mins, $wallet_sender, $wallet_getter, $trans_id) {
-    if (!empty($wallet)):
+    if (!empty($wallet)) {
 
         //Set Params
-        if ($period_mins != null && $period_mins > 0):
+        if ($period_mins != null && $period_mins > 0) {
             $params['timestamp'] = $period_mins;
-        endif;
+        };
 
-        if ($wallet_sender != null && $wallet_sender > 0):
-            $params['senderRS']   = $wallet_sender;
-        endif;
+        if ($wallet_sender != null && $wallet_sender > "") {
+            $params['senderRS'] = $wallet_sender;
+        }
 
-        if ($wallet_getter != null && $wallet_getter > 0):
+        if ($wallet_getter != null && $wallet_getter > "") {
             $params['recipientRS'] = $wallet_getter;
-        endif;
+        }
 
-        if ($trans_id != null && $trans_id > 0):
+        if ($trans_id != null && $trans_id > 0) {
             $params['transaction'] = $trans_id;
-        endif;
+        }
         //End Set Params
 
-        if (is_array($params) && sizeof($params) > 0):
+        if (is_array($params) && sizeof($params) > 0) {
             //Go to get Transactions with Params
             $transactions = GetTransactions($wallet, $params);
-        else:
+        } else {
             //Go to get All Transactions
             $transactions = GetTransactions($wallet);
-        endif;
+        }
+
+        //var_dump($transactions); // Json
 
 
-    else:
+    } else {
         return false;
-    endif;
+    }
 }
 
 function GetTransactions($wallet, $params = null) {
-    if (!empty($wallet)):
-        //Default Query Transaction
-        $query = http_build_query([
-            'requestType' => 'getBlockchainTransactions',
-            'account'     => $wallet
-        ]);
+    if (!empty($wallet)) {
+        $transaction_array = array();
+        $cnt = 0;
+        if (!empty($params) && $params != null && sizeof($params) > 0) {
+            //Get Slice Transactions with Params
+            do {
+                $query = http_build_query([
+                    'requestType' => 'getBlockchainTransactions',
+                    'account' => $wallet,
+                    'firstIndex' => $cnt * $GLOBALS['index'],
+                    'lastIndex' => ($cnt * $GLOBALS['index']) + $GLOBALS['index']
+                ]);
+                $transaction_tmp = CurlJsonGet($GLOBALS['url_default_request'], $query);
 
-        if (!empty($params) && $params != null && sizeof($params) > 0):
-        //Get Slice Transactions with Params
+                $transaction_check = CheckParamsTransactions($transaction_tmp, $params); //Check on Isset Any Params
 
-        else:
-        //Get All Transactions
+                //Get Slice Array for Last equally any param
+                $last_array = ValidateRequestTransaction(($transaction_check));
+                if (sizeof($last_array) > 0 || $last_array == true) {
+                    $transaction_tmp = $transaction_check;
+                    //var_dump("test");
+                }
 
-        endif;
 
-    else:
-    //Error
+                //If Valid False die send Request and no-repeat
+                if (ValidateRequest($transaction_tmp)) {
+                    if (ValidateRequestTransaction($transaction_tmp) === true) {
+                        $transaction_array[] = $transaction_tmp;
+                    } elseif (sizeof(ValidateRequestTransaction($transaction_tmp)) > 0) {
+                        $transaction_array[] = $transaction_tmp;
+                    }
+                }
+
+                $cnt++;
+            } while (ValidateRequestTransaction($transaction_tmp) === true && ValidateRequest($transaction_tmp) === true);
+
+                //Return Transaction_array
+                return $transaction_array;
+
+        } else {//Else If Empty Params
+            //Get All Transactions
+            do {
+                $query = http_build_query([
+                    'requestType' => 'getBlockchainTransactions',
+                    'account'     => $wallet,
+                    'firstIndex'  => $cnt * $GLOBALS['index'],
+                    'lastIndex'   => ($cnt * $GLOBALS['index']) + $GLOBALS['index']
+
+                ]);
+               // var_dump($query);
+               // echo "<br><br>";
+                $transaction_tmp = CurlJsonGet($GLOBALS['url_default_request'], $query);
+                //If Valid False die send Request and no-repeat
+
+                if (ValidateRequest($transaction_tmp)) {
+                    if (ValidateRequestTransaction($transaction_tmp) === true) {
+                        $transaction_array[] = $transaction_tmp;
+                    } elseif (sizeof(ValidateRequestTransaction($transaction_tmp)) > 0) {
+                        //var_dump("test");
+                        $transaction_array[] = $transaction_tmp;
+                    }
+                }
+
+                $cnt++;
+            } while (ValidateRequestTransaction($transaction_tmp) === true && ValidateRequest($transaction_tmp) === true);
+
+            //Return Transaction_array
+            return $transaction_array;
+
+
+        }//End (!empty($params) && $params != null && sizeof($params) > 0)
+
+    } else { // If empty Wallet
+        //Error
         return false;
-    endif;
+    }
 }
 
 function ValidateRequest($json) {
-
+    if (!is_array(json_decode($json, true))) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function ValidateRequestTransaction($json) {
+    $array = json_decode($json, true);
+    if (is_array($array)) {
+        if (sizeof($array['transactions']) > 0) {
+            if (sizeof($array['transactions']) < 100) {
+                return json_encode($array); //Last Url //Fix one more Request
+            }
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
 
+function CheckParamsTransactions($json, $params) {
+    $array_transaction = json_decode($json, true);
+    if (sizeof($array_transaction) > 0 && sizeof($params) > 0) {
+     //   var_dump($array_transaction['transactions']);
+        foreach ($array_transaction['transactions'] as $key => $transaction) {
+            foreach ($params as $key_param => $value) {
+
+                if (isset($transaction[$key_param])) {
+                    //Check TimeStamp
+                    if ($key_param=="timestamp") {
+                        $time_minutes_site = TimeStampPrizm($transaction[$key_param]); //Time Stamp Prizm convert Server timestamp in minutes
+                        $time_minutes_server = time() - ($value * 60);                 //Value = minutes param * 60sec / and minus now_time - minutes param
+                        if ($time_minutes_server < $time_minutes_site) {
+                            $last_equally = $key;
+                            //var_dump($key);
+                        }
+                    } else {
+                        //Check other Params
+                        //var_dump("test");
+                        if ($transaction[$key_param] == $value) {
+                            $last_equally = $key;
+                        }
+                    }
+                }
+
+                //Break
+                if ($last_equally) {
+                    break 2;
+                }
+
+            }
+
+        }//End Foreach
+
+        //Return
+        if ($last_equally) {
+            //Send Slide Array
+            $array_transaction['transactions'] = array_slice($array_transaction['transactions'], 0 , $last_equally+1);
+            //var_dump($array_transaction);
+            return json_encode($array_transaction);
+
+        } else {
+            //Not Found params
+            return false;
+        }
+
+
+    } else {
+        //Not array or Empty $params
+        return false;
+    }
 }
 
 
