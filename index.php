@@ -33,21 +33,21 @@
     <form method="post" action="index.php">
         <h3>Paymant</h3>
         <label for="Wallet">Wallet : </label>
-        <input id="Wallet" type="text" name="wallet">
+        <input id="Wallet" type="text" name="wallet_pay">
 
         <h4>Params</h4>
 
         <label for="Wallet">Period Minutes: </label>
-        <input id="Wallet" type="text" name="time_mins">
+        <input id="Wallet" type="text" name="wallet_pay_getter">
         <br><br>
-        <label for="Wallet">Transaction id: </label>
-        <input id="Wallet" type="text" name="trans_id">
+        <label for="Wallet">Public Key: </label>
+        <input id="Wallet" type="text" name="wallet_pay_getter_public_key">
         <br><br>
-        <label for="Wallet">Wallet Sender: </label>
-        <input id="Wallet" type="text" name="wallet_sender">
+        <label for="Wallet">Amount: </label>
+        <input id="Wallet" type="text" name="amount">
         <br><br>
-        <label for="Wallet">Wallet Getter: </label>
-        <input id="Wallet" type="text" name="wallet_getter">
+        <label for="Wallet">Comments: </label>
+        <input id="Wallet" type="text" name="comments">
         <br><br>
         <input type="submit" value="Отправить">
     </form>
@@ -63,6 +63,7 @@ if (isset($_REQUEST)) {
     if (isset($_REQUEST['wallet']) && !empty($_REQUEST['wallet'])) {
         //Get Transactions or Info
         $tmp = GetInfoWallet($_REQUEST['wallet'], $_REQUEST['time_mins'], $_REQUEST['wallet_sender'], $_REQUEST['wallet_getter'], $_REQUEST['trans_id']);
+        var_dump($tmp);
 
     }//Check Wallet
 } //Check On isset Request
@@ -501,6 +502,10 @@ function CheckParamsTransactions($json, $params) {
         //Not array or Empty $params
         return false;
     }
+}
+
+function SendPrizm($wallet, $wallet_public_key, $ammount, $comment) {
+
 }
 
 
